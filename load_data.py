@@ -82,6 +82,6 @@ def prepare_dataset(data):
 			else:
 				x.extend([1., (float(row[i]) - means[i]) / var[i] ])
 		X.append(x)
-	return (X, y)
+	return (np.array(X), np.array(y))
 
 
