@@ -1,5 +1,6 @@
 import numpy as np
-import sklearn
+from scipy import stats
+
 from sklearn import cross_validation
 from sklearn import linear_model
 from sklearn import metrics
@@ -11,8 +12,8 @@ def prepare_dataset(data):
 	y = []
 	X = []
 
-	means = {}
-	var = {}
+	median = {}
+	interquartile = {}
 	num_attribs = len(data[0])
 	for i in range(2, num_attribs):
 		values = []
@@ -20,21 +21,30 @@ def prepare_dataset(data):
 			if row[i] != 'NA':
 				values.append(float(row[i]))
 		valuesa = np.array(values)
-		means[i] = valuesa.mean()
-		var[i] = valuesa.var()
+		median[i] = np.median(valuesa)
+		interquartile[i] = stats.scoreatpercentile(valuesa, 75) - \
+							stats.scoreatpercentile(valuesa, 25)
 	
+	print median
+	print interquartile
 	for row in data:
 		y.append(float(row[1]))
 		x = []
 		for i in range(2, num_attribs):
 			if row[i] == 'NA':
 				x.extend([-1., 0.])
+			elif abs((float(row[i]) - median[i]) / interquartile[i]) > 4:
+				x.extend([-1., 0.])
 			else:
-				x.extend([1., (float(row[i]) - means[i]) / var[i] ])
+				if interquartile[i] == 0:
+					value = (float(row[i]) - median[i])
+				else:
+					value = (float(row[i]) - median[i]) / interquartile[i]
+				x.extend([1., value])
 		X.append(x)
 	return (np.array(X), np.array(y))
 
-def load_data():
+def load_dataset():
 	data = load_data.load_data()
 	# load_data.basic_stats(data)
 
@@ -47,7 +57,7 @@ def run_model(dataset):
 	C = [0.01]
 	train_results = {0.01:[]}
 	cv_results = {0.01:[]}
-	while C[-1] <= 200:
+	while C[-1] <= 40:
 		C.append(C[-1] * 2)
 		train_results[C[-1]] = []
 		cv_results[C[-1]] = []
@@ -98,6 +108,6 @@ def run_model(dataset):
 
 
 
-if __main__ == '__main__':
-	dataset = load_data()
+if __name__ == '__main__':
+	dataset = load_dataset()
 	run_model(dataset)
