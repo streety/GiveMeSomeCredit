@@ -39,7 +39,13 @@ def basic_stats(data):
 				train_missing += 1
 			elif row[i]:
 				train_values.append(float(row[i]))
-						
+		
+		if i >= 2:
+			fig = plt.figure()
+			ax = fig.add_subplot(111)
+			ax.hist(np.array(train_values), 50)
+			ax.set_title(headers[i])
+			plt.show()	
 		
 		test_values = []
 		test_missing = 0
@@ -56,32 +62,6 @@ def basic_stats(data):
 											float(np.array(test_values).mean()),
 											test_missing,)
 
-def prepare_dataset(data):
-	"""Split in x and y, deal with missing values etc"""
-	y = []
-	X = []
 
-	means = {}
-	var = {}
-	num_attribs = len(data[0])
-	for i in range(2, num_attribs):
-		values = []
-		for row in data:
-			if row[i] != 'NA':
-				values.append(float(row[i]))
-		valuesa = np.array(values)
-		means[i] = valuesa.mean()
-		var[i] = valuesa.var()
-	
-	for row in data:
-		y.append(float(row[1]))
-		x = []
-		for i in range(2, num_attribs):
-			if row[i] == 'NA':
-				x.extend([-1., 0.])
-			else:
-				x.extend([1., (float(row[i]) - means[i]) / var[i] ])
-		X.append(x)
-	return (np.array(X), np.array(y))
 
 
