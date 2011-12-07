@@ -66,6 +66,9 @@ class Base_Model(object):
 		return (np.array(X), np.array(y))
 	
 	def normalise_data(self, data):
+		# This needs to be changed
+		# must use median and interquartile ranges from 
+		# training data only
 		cols = range(0, data.shape[1])
 		for i in cols:
 			median = np.median(data[:,i])

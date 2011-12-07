@@ -14,17 +14,11 @@ from base import calc_score, split_data
 from logistic_base_model import Logistic_Base_Model, prepare_params
 
 
-class Logistic_Polynomial_Model(Logistic_Base_Model):
+class Logistic_Basic_Model(Logistic_Base_Model):
 
 	def load_train_data(self,data):
-		data = super(Logistic_Polynomial_Model, self).load_train_data(data)
+		data = super(Logistic_Basic_Model, self).load_train_data(data)
 		X, y = data
-
-		cols = range(1, X.shape[1], 2)
-		for i in cols:
-			for j in cols:
-				new_feature = X[:,i] * X[:,j]
-				X = np.concatenate((X, np.atleast_2d(new_feature).T), axis=1)
 
 		X = self.normalise_data(X)
 
@@ -34,7 +28,7 @@ class Logistic_Polynomial_Model(Logistic_Base_Model):
 		return (X, y)
 	
 	def load_data(self, data, cv=True):
-		data = super(Logistic_Polynomial_Model, self).load_data(data, cv)
+		data = super(Logistic_Basic_Model, self).load_data(data, cv)
 		X, y = data
 
 		X = self.normalise_data(X)
@@ -63,7 +57,7 @@ if __name__ == '__main__':
 		for train_index, cv_index in rs:
 			train_data, cv_data = split_data(data[1], train_index, cv_index)
 					
-			model = Logistic_Polynomial_Model()
+			model = Logistic_Basic_Model()
 			train_X, train_y = model.load_train_data(train_data)
 			cv_X, cv_y = model.load_data(cv_data)
 			for c in C:

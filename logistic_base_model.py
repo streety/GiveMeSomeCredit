@@ -24,13 +24,10 @@ class Logistic_Base_Model(Base_Model):
 
 
 def prepare_params(start_c, limit, multiplier):
-	start_c = 0.0000000001
-	multiplier = 10
-	limit = 0.00001
 	C = [start_c]
 	train_results = {start_c:[]}
 	cv_results = {start_c:[]}
-	while C[-1] <= limit:
+	while C[-1] < limit:
 		C.append(C[-1] * multiplier)
 		train_results[C[-1]] = []
 		cv_results[C[-1]] = []
