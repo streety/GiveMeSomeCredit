@@ -29,10 +29,7 @@ class Base_Model(object):
 								stats.scoreatpercentile(valuesa, 25)
 		
 		for row in data:
-			try:
-				y.append(float(row[1]))
-			except:
-				print row
+			y.append(float(row[1]))
 			x = []
 			for i in range(2, num_attribs):
 				if row[i] == 'NA':
@@ -106,7 +103,7 @@ def calc_score(predictions, actual):
 def split_data(data, train_index, cv_index):
 	train_data = []
 	cv_data = []
-	for row, train_include, cv_include in zip(data[1], train_index, cv_index):
+	for row, train_include, cv_include in zip(data, train_index, cv_index):
 		if train_include:
 			train_data.append(row)
 		
