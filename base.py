@@ -65,21 +65,25 @@ class Base_Model(object):
 
 		return (np.array(X), np.array(y))
 	
-	def normalise_data(self, data):
+	norm_median = {}
+	norm_divisor = {}
+	
+	def normalise_data(self, data, train=True):
 		# This needs to be changed
 		# must use median and interquartile ranges from 
 		# training data only
 		cols = range(0, data.shape[1])
 		for i in cols:
-			median = np.median(data[:,i])
-			interquartile = stats.scoreatpercentile(data[:,i], 75) - \
-								stats.scoreatpercentile(data[:,i], 25)
-			if interquartile == 0:
-				divisor = 1
-			else:
-				divisor = interquartile
+			if train:
+				self.norm_median[i] = np.median(data[:,i])
+				interquartile = stats.scoreatpercentile(data[:,i], 75) - \
+									stats.scoreatpercentile(data[:,i], 25)
+				if interquartile == 0:
+					self.norm_divisor[i] = 1
+				else:
+					self.norm_divisor[i] = interquartile
 			
-			data[:,i] = (data[:,i] - median) / divisor
+			data[:,i] = (data[:,i] - self.norm_median[i]) / self.norm_divisor[i]
 		return data
 	
 	def train_model(self, X, y, params):

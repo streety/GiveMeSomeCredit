@@ -43,7 +43,7 @@ class Logistic_Polynomial_Model(Logistic_Base_Model):
 				new_feature = X[:,i] * X[:,j]
 				X = np.concatenate((X, np.atleast_2d(new_feature).T), axis=1)
 
-		X = self.normalise_data(X)
+		X = self.normalise_data(X, False)
 
 		# cv_test_data = self.pcan.execute(X)
 		return (X, y)

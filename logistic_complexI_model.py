@@ -14,12 +14,25 @@ from base import calc_score, split_data
 from logistic_base_model import Logistic_Base_Model, prepare_params
 
 
-class Logistic_Basic_Model(Logistic_Base_Model):
+class Logistic_ComplexI_Model(Logistic_Base_Model):
 
 	def load_train_data(self,data):
-		data = super(Logistic_Basic_Model, self).load_train_data(data)
+		data = super(Logistic_ComplexI_Model, self).load_train_data(data)
 		X, y = data
 
+		cols = range(1, X.shape[1], 2)
+		for i in cols:
+			
+			new_feature = np.power(X[:,i]+1, -1)
+			X = np.concatenate((X, np.atleast_2d(new_feature).T), axis=1)
+		
+		new_cols = range(max(cols), X.shape[1])
+		for i in cols:
+			for j in new_cols:
+				new_feature = X[:,i] * X[:,j]
+				X = np.concatenate((X, np.atleast_2d(new_feature).T), axis=1)
+		
+		print X.shape
 		X = self.normalise_data(X)
 
 		# self.pcan = mdp.nodes.PCANode(output_dim=0.99)
@@ -28,9 +41,21 @@ class Logistic_Basic_Model(Logistic_Base_Model):
 		return (X, y)
 	
 	def load_data(self, data, cv=True):
-		data = super(Logistic_Basic_Model, self).load_data(data, cv)
+		data = super(Logistic_ComplexI_Model, self).load_data(data, cv)
 		X, y = data
 
+		cols = range(1, X.shape[1], 2)
+		for i in cols:
+			
+			new_feature = np.power(X[:,i]+1, -1)
+			X = np.concatenate((X, np.atleast_2d(new_feature).T), axis=1)
+		
+		new_cols = range(max(cols), X.shape[1])
+		for i in cols:
+			for j in new_cols:
+				new_feature = X[:,i] * X[:,j]
+				X = np.concatenate((X, np.atleast_2d(new_feature).T), axis=1)
+		
 		X = self.normalise_data(X, False)
 
 		# cv_test_data = self.pcan.execute(X)
@@ -49,15 +74,15 @@ if __name__ == '__main__':
 		data = load_data.load_data()
 
 		# Set up datasets for cross validation
-		rs = cross_validation.ShuffleSplit(150000, n_iterations=3, test_fraction=.30)
+		rs = cross_validation.ShuffleSplit(150000, n_iterations=3, test_fraction=.80)
 
-		C, train_results, cv_results = prepare_params(0.0000001, 1000, 50)
+		C, train_results, cv_results = prepare_params(0.0000001, 1000, 100)
 		
 		# Run through the cross validation iterations
 		for train_index, cv_index in rs:
 			train_data, cv_data = split_data(data[1], train_index, cv_index)
 					
-			model = Logistic_Basic_Model()
+			model = Logistic_ComplexI_Model()
 			train_X, train_y = model.load_train_data(train_data)
 			cv_X, cv_y = model.load_data(cv_data)
 			for c in C:
@@ -86,7 +111,7 @@ if __name__ == '__main__':
 		c = options[1]
 		data = load_data.load_data()
 
-		model = Logistic_Pca_Model()
+		model = Logistic_ComplexI_Model()
 		train_X, train_y = model.load_train_data(data[1])
 		test_X, test_y = model.load_data(data[2], False)
 
