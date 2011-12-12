@@ -74,9 +74,9 @@ if __name__ == '__main__':
 		data = load_data.load_data()
 
 		# Set up datasets for cross validation
-		rs = cross_validation.ShuffleSplit(150000, n_iterations=3, test_fraction=.80)
+		rs = cross_validation.ShuffleSplit(150000, n_iterations=3, test_fraction=.30)
 
-		C, train_results, cv_results = prepare_params(0.0000001, 1000, 100)
+		C, train_results, cv_results = prepare_params(100, 10000, 10)
 		
 		# Run through the cross validation iterations
 		for train_index, cv_index in rs:
